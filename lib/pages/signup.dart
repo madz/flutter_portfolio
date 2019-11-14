@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:flutter_examples/auth/auth.dart';
-import 'package:flutter_examples/form/login_form.dart';
-import 'package:flutter_examples/widgets/custom_button.dart';
+import 'package:flutter_examples/form/signup_form.dart';
+import 'package:flutter_examples/widgets/social_network_button_row.dart';
+
+import 'login.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -11,8 +12,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final Auth auth = Auth();
-
-  bool privacyPolicy = true;
 
   @override
   Widget build(BuildContext context) {
@@ -41,31 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   "Enter via social networks",
                 ),
                 SizedBox(height: 32.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CustomButton(
-                      image: "images/twitter.png",
-                      color: Color(0xff5AAAF4),
-                      height: 60.0,
-                      width: 120.0,
-                      onPressed: () {
-                        auth.loginTwitter();
-                      },
-                    ),
-                    SizedBox(width: 32.0),
-                    CustomButton(
-                      image: "images/facebook.ico",
-                      color: Color(0xff4A6EA9),
-                      height: 60.0,
-                      width: 120.0,
-                      onPressed: () {
-                        auth.loginFacebook();
-                      },
-                    ),
-                  ],
-                ),
+                SocialNetworkButtonRow(),
                 SizedBox(height: 32.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -78,65 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(height: 32.0),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: LoginForm(),
-                ),
-                SizedBox(height: 16.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Checkbox(
-                        value: privacyPolicy,
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            privacyPolicy = newValue;
-                          });
-                        },
-                      ),
-                      Text(
-                        "I agree with privacy ",
-                        style: TextStyle(),
-                      ),
-                      InkWell(
-                        child: Text(
-                          "policy",
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ),
-                        ),
-                        onTap: () {
-                          auth.signUp(context);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: SizedBox(
-                          height: 60.0,
-                          child: RaisedButton(
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            color: Colors.blue,
-                            onPressed: () {
-                              auth.loginEmail(context);
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: SignUpForm(),
                 ),
                 SizedBox(height: 32.0),
                 Row(
@@ -154,7 +71,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       onTap: () {
-                        auth.loginEmail(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginPage(),
+                          ),
+                        );
                       },
                     )
                   ],

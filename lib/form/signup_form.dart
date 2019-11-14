@@ -1,24 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_examples/auth/auth.dart';
-import 'package:flutter_examples/pages/forgot_password.dart';
 import 'package:flutter_examples/pages/home.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:regexed_validator/regexed_validator.dart';
 
-class LoginForm extends StatefulWidget {
+class SignUpForm extends StatefulWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _SignUpFormState createState() => _SignUpFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _SignUpFormState extends State<SignUpForm> {
   final Auth auth = Auth();
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-
-  bool _rememberMe = true;
+  bool privacyPolicy = true;
 
   @override
   Widget build(BuildContext context) {
@@ -59,33 +56,25 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Checkbox(
-                  value: _rememberMe,
+                  value: privacyPolicy,
                   onChanged: (bool newValue) {
                     setState(() {
-                      _rememberMe = newValue;
+                      privacyPolicy = newValue;
                     });
                   },
                 ),
-                Expanded(
-                  child: Text(
-                    "Remember me ",
-                  ),
+                Text(
+                  "I agree with privacy ",
+                  style: TextStyle(),
                 ),
                 InkWell(
                   child: Text(
-                    "Forgot password?",
+                    "policy",
                     style: TextStyle(
                       color: Colors.blue,
                     ),
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ForgotPasswordPage(),
-                      ),
-                    );
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -98,42 +87,33 @@ class _LoginFormState extends State<LoginForm> {
                     height: 60.0,
                     child: RaisedButton(
                       child: Text(
-                        "Log In",
+                        "Sign Up",
                         style: TextStyle(
                           color: Colors.white,
                         ),
                       ),
                       color: Colors.blue,
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          FirebaseUser firebaseUser = await auth.loginEmail(
-                              context,
-                              _emailController.text,
-                              _passwordController.text);
+                      onPressed: !privacyPolicy
+                          ? null
+                          : () async {
+                              if (_formKey.currentState.validate()) {
+                                AuthResult result = await auth.signUpEmail(
+                                    context,
+                                    _emailController.text,
+                                    _passwordController.text);
 
-                          if (firebaseUser != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(),
-                              ),
-                            );
-
-                            if (_rememberMe) {
-                              final storage = new FlutterSecureStorage();
-                              //save email and password for remembering user
-                              await storage.write(
-                                  key: "email", value: _emailController.text);
-
-                              await storage.write(
-                                  key: "password",
-                                  value: _passwordController.text);
-                            }
-                          }
-                        } else {
-                          debugPrint("Invalid form");
-                        }
-                      },
+                                if (result != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                debugPrint("Invalid form");
+                              }
+                            },
                     ),
                   ),
                 ),
