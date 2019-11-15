@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_examples/dialog/error_dialog.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final _auth = FirebaseAuth.instance;
@@ -20,8 +21,9 @@ class Auth {
       PlatformException platformException = e;
 
       debugPrint('error = ${e.toString()}');
-      errorDialog.showErrorDialog(
-          context, platformException.message, platformException.details);
+      errorDialog.showErrorDialog(context,
+          errorMessage: platformException.message,
+          title: platformException.code);
     }
 
     return result;
@@ -30,7 +32,10 @@ class Auth {
   Future<FirebaseUser> loginEmail(
       BuildContext context, String email, String password) async {
     debugPrint("loginEmail: email = $email password = $password");
-
+    AuthCredential authCredential = EmailAuthProvider.getCredential(
+      email: email,
+      password: password,
+    );
     FirebaseUser user;
 
     try {
@@ -52,7 +57,6 @@ class Auth {
       GoogleSignIn _googleSignIn = GoogleSignIn(
         scopes: [
           'email',
-          'https://www.googleapis.com/auth/contacts.readonly',
         ],
       );
 
@@ -66,6 +70,7 @@ class Auth {
       );
 
       user = (await _auth.signInWithCredential(credential)).user;
+      user.linkWithCredential(credential);
     } catch (e) {
       PlatformException platformException = e;
 
@@ -75,8 +80,39 @@ class Auth {
     return user;
   }
 
-  void loginFacebook() {
+  Future<FirebaseUser> loginFacebook(BuildContext context) async {
     debugPrint("Login Facebook");
+
+    FirebaseUser user;
+
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        try {
+          final AuthCredential credential = FacebookAuthProvider.getCredential(
+              accessToken: result.accessToken.token);
+
+          user = (await _auth.signInWithCredential(credential)).user;
+          user.linkWithCredential(credential);
+        } catch (e) {
+          PlatformException platformException = e;
+
+          showError(context, platformException);
+        }
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        showFacebookError(
+            context, result.errorMessage, result.status.toString());
+        break;
+      case FacebookLoginStatus.error:
+        showFacebookError(
+            context, result.errorMessage, result.status.toString());
+        break;
+    }
+
+    return user;
   }
 
   void sendForgotPasswordLink(BuildContext context, String email) {
@@ -86,8 +122,9 @@ class Auth {
       PlatformException platformException = e;
 
       debugPrint('error = ${e.toString()}');
-      errorDialog.showErrorDialog(
-          context, platformException.message, platformException.details);
+      errorDialog.showErrorDialog(context,
+          errorMessage: platformException.message,
+          title: platformException.code);
     }
   }
 
@@ -112,7 +149,14 @@ class Auth {
 
   void showError(BuildContext context, PlatformException platformException) {
     debugPrint('error = ${platformException.toString()}');
-    errorDialog.showErrorDialog(
-        context, platformException.message, platformException.details);
+    errorDialog.showErrorDialog(context,
+        errorMessage: platformException.message, title: platformException.code);
+  }
+
+  void showFacebookError(
+      BuildContext context, String messageError, String errorCode) {
+    debugPrint('error = $messageError');
+    errorDialog.showErrorDialog(context,
+        errorMessage: messageError, title: errorCode);
   }
 }

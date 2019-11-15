@@ -37,8 +37,17 @@ class SocialNetworkButtonRow extends StatelessWidget {
           color: Color(0xff4A6EA9),
           height: 60.0,
           width: 120.0,
-          onPressed: () {
-            auth.loginFacebook();
+          onPressed: () async {
+            FirebaseUser firebaseUser = await auth.loginFacebook(context);
+
+            if (firebaseUser != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            }
           },
         ),
       ],

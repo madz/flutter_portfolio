@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ErrorDialog {
-  showErrorDialog(BuildContext context, String title, String errorMessage) {
+  showErrorDialog(BuildContext context, {String title, String errorMessage}) {
     Alert(
       context: context,
       type: AlertType.error,
