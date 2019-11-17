@@ -34,6 +34,8 @@ class _LoadingPageState extends State<LoadingPage> {
     );
   }
 
+  //login user from remembered email/password credentials.
+
   void userRemember() async {
     setState(() {
       _showSpinner = true;
@@ -52,6 +54,17 @@ class _LoadingPageState extends State<LoadingPage> {
             context,
             MaterialPageRoute(
               builder: (context) => HomePage(),
+            ),
+          );
+        } else {
+          // remove stored user login info
+          final storage = new FlutterSecureStorage();
+          storage.deleteAll();
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
             ),
           );
         }
