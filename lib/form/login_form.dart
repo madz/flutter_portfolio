@@ -112,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
                               _passwordController.text);
 
                           if (firebaseUser != null) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => HomePage(),
