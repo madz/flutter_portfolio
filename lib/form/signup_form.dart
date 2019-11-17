@@ -97,13 +97,13 @@ class _SignUpFormState extends State<SignUpForm> {
                           ? null
                           : () async {
                               if (_formKey.currentState.validate()) {
-                                AuthResult result = await auth.signUpEmail(
+                                FirebaseUser user = await auth.signUpEmail(
                                     context,
                                     _emailController.text,
                                     _passwordController.text);
 
-                                if (result != null) {
-                                  Navigator.push(
+                                if (user != null) {
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => HomePage(),

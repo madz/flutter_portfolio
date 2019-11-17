@@ -10,32 +10,30 @@ final _auth = FirebaseAuth.instance;
 class Auth {
   ErrorDialog errorDialog = ErrorDialog();
 
-  Future<AuthResult> signUpEmail(
+  Future<FirebaseUser> signUpEmail(
       BuildContext context, String email, String password) async {
     debugPrint("signUpEmail: email = $email password = $password");
-    AuthResult result;
+    FirebaseUser user;
+
     try {
-      result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      user = (await _auth.createUserWithEmailAndPassword(
+              email: email, password: password))
+          .user;
     } catch (e) {
       PlatformException platformException = e;
 
-      debugPrint('error = ${e.toString()}');
-      errorDialog.showErrorDialog(context,
-          errorMessage: platformException.message,
-          title: platformException.code);
+      showError(context, platformException);
     }
-
-    return result;
+    return user;
   }
 
   Future<FirebaseUser> loginEmail(
       BuildContext context, String email, String password) async {
     debugPrint("loginEmail: email = $email password = $password");
-    AuthCredential authCredential = EmailAuthProvider.getCredential(
-      email: email,
-      password: password,
-    );
+//    AuthCredential authCredential = EmailAuthProvider.getCredential(
+//      email: email,
+//      password: password,
+//    );
     FirebaseUser user;
 
     try {
