@@ -147,8 +147,11 @@ class Auth {
 
   void showError(BuildContext context, PlatformException platformException) {
     debugPrint('error = ${platformException.toString()}');
-    errorDialog.showErrorDialog(context,
-        errorMessage: platformException.message, title: platformException.code);
+    final errorSnackBar = SnackBar(
+      content: Text('${platformException.message}'),
+    );
+
+    Scaffold.of(context).showSnackBar(errorSnackBar);
   }
 
   void showFacebookError(
