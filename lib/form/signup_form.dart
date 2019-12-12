@@ -33,9 +33,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 hintText: 'Email',
               ),
               validator: (String value) {
-                return !validator.email(_emailController.text)
-                    ? 'Email is invalid.'
-                    : null;
+                return !validator.email(value) ? 'Email is invalid.' : null;
               },
               keyboardType: TextInputType.emailAddress,
             ),
@@ -48,8 +46,17 @@ class _SignUpFormState extends State<SignUpForm> {
                 hintText: 'Password',
               ),
               keyboardType: TextInputType.visiblePassword,
-              validator: (value) =>
-                  value.isEmpty ? 'Password can\'t be empty' : null,
+              validator: (String value) {
+                if (value.isEmpty) {
+                  return 'Password can\'t be empty';
+                }
+
+                if (value.length < 8) {
+                  return 'Password can\'t be less than 8 characters';
+                }
+
+                return null;
+              },
             ),
             SizedBox(height: 16.0),
             Row(

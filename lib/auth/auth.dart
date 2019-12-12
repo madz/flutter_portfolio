@@ -1,15 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_examples/dialog/error_dialog.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final _auth = FirebaseAuth.instance;
 
 class Auth {
-  ErrorDialog errorDialog = ErrorDialog();
-
   Future<FirebaseUser> signUpEmail(
       BuildContext context, String email, String password) async {
     debugPrint("signUpEmail: email = $email password = $password");
@@ -30,10 +27,6 @@ class Auth {
   Future<FirebaseUser> loginEmail(
       BuildContext context, String email, String password) async {
     debugPrint("loginEmail: email = $email password = $password");
-//    AuthCredential authCredential = EmailAuthProvider.getCredential(
-//      email: email,
-//      password: password,
-//    );
     FirebaseUser user;
 
     try {
@@ -113,16 +106,15 @@ class Auth {
     return user;
   }
 
-  void sendForgotPasswordLink(BuildContext context, String email) {
+  Future<void> sendForgotPasswordLink(
+      BuildContext context, String email) async {
+    debugPrint("sendForgotPasswordLink email = $email");
     try {
-      _auth.sendPasswordResetEmail(email: email);
+      await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       PlatformException platformException = e;
 
-      debugPrint('error = ${e.toString()}');
-      errorDialog.showErrorDialog(context,
-          errorMessage: platformException.message,
-          title: platformException.code);
+      showError(context, platformException);
     }
   }
 
@@ -147,14 +139,21 @@ class Auth {
 
   void showError(BuildContext context, PlatformException platformException) {
     debugPrint('error = ${platformException.toString()}');
-    errorDialog.showErrorDialog(context,
-        errorMessage: platformException.message, title: platformException.code);
+    final errorSnackBar = SnackBar(
+      content: Text('${platformException.message}'),
+    );
+
+    Scaffold.of(context).showSnackBar(errorSnackBar);
   }
 
   void showFacebookError(
       BuildContext context, String messageError, String errorCode) {
     debugPrint('error = $messageError');
-    errorDialog.showErrorDialog(context,
-        errorMessage: messageError, title: errorCode);
+
+    final errorSnackBar = SnackBar(
+      content: Text('$errorCode - $messageError'),
+    );
+
+    Scaffold.of(context).showSnackBar(errorSnackBar);
   }
 }
