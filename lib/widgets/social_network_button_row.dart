@@ -22,7 +22,7 @@ class SocialNetworkButtonRow extends StatelessWidget {
             FirebaseUser firebaseUser = await auth.loginGoogle(context);
 
             if (firebaseUser != null) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomePage(),
@@ -41,7 +41,7 @@ class SocialNetworkButtonRow extends StatelessWidget {
             FirebaseUser firebaseUser = await auth.loginFacebook(context);
 
             if (firebaseUser != null) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomePage(),
